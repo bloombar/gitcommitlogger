@@ -13,6 +13,6 @@ jobs:
           echo "User: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
           echo "Event name: ${{ github.event_name }}"
-          echo "Commits: ${{ github.event.commits.length }}"
+          echo "Commits: ${{ toJSON(github.event.commits) }}"
           echo "Github context: ${{ toJSON(github) }}"
           echo "Job context: ${{ toJSON(job) }}"
