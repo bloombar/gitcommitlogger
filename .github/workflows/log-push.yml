@@ -5,9 +5,13 @@ on:
 jobs:
   log:
     runs-on: ubuntu-latest
+    env:
+      WEB_APP_URL: ${{ secrets.WEB_APP_URL }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "^3.9"
       - name: Logging
         run: |
           echo "User: ${{ github.actor }}"
