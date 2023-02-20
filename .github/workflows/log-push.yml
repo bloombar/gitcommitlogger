@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
 jobs:
-  deploy:
+  log:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -11,5 +11,8 @@ jobs:
       - name: Logging
         run: |
           echo "User: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Commits: ${{ github.event.commits.length }}"
           echo "Github context: ${{ toJSON(github) }}"
           echo "Job context: ${{ toJSON(job) }}"
