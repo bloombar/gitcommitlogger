@@ -14,6 +14,7 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Event name: ${{ github.event_name }}"
           echo "${{ toJSON(github.event.commits) }}" > data.json
+          echo "Contents of data.json:"
           cat data.json
           echo "Github context: ${{ toJSON(github) }}"
           echo "Job context: ${{ toJSON(job) }}"
