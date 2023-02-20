@@ -9,3 +9,5 @@ Overview:
 - Set up GitHub repository with a custom GitHub Action workflow to send a `POST` request to the Google Sheet web app whenever a push or other action is made on the repository.
 - Have the Google Sheet web app parse the request and log the data into the sheet.
 - Use Google Sheets App Scripts for any follow-up actions once the row is added.
+
+- ... still trying to differentiate pull requests from pushes
