@@ -10,6 +10,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Logging
         run: |
-          echo "User: ${{ github.actor }}""
-          echo Github context: ${{ toJSON(github) }}
-          echo Job context: ${{ toJSON(job) }}
+          echo "User: ${{ github.actor }}"
+          echo "Github context: ${{ toJSON(github) }}"
+          echo "Job context: ${{ toJSON(job) }}"
