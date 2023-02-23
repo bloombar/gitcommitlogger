@@ -53,7 +53,7 @@ def main():
   args = get_args()
 
   # set up logging
-  logger = setup_logging(args.inputfile)
+  logger = setup_logging(args.outputfile)
 
   # Get the git log
   # load commit ids from file
