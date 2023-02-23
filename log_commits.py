@@ -125,7 +125,7 @@ def main():
     commits_json = json.dumps(commits_list)
     # send the data to the web app in a POST request
     r = requests.post(args.url, json=commits_json)
-    print(r.status_code, r.reason, r.content, r.text) #damn
+    print(r.status_code, r.reason, r.content, r.text) #typof
 
 if __name__ == "__main__":
   main()
