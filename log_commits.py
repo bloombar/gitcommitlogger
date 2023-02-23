@@ -16,7 +16,10 @@ def setup_logging(logfile):
   # Setup logging
   logger = logging.getLogger('log_commits')
   logger.setLevel(logging.DEBUG)
-  # create file handler which logs even debug messages
+  # log to stdout
+  # ch = logging.StreamHandler()
+  # logger.addHandler(ch)
+  # log to file
   fh = logging.handlers.RotatingFileHandler(logfile, maxBytes=1000000, backupCount=5)
   fh.setLevel(logging.DEBUG)
   logger.addHandler(fh)    
