@@ -17,6 +17,7 @@ jobs:
           python-version: "^3.9"
       - name: Logging
         run: |
+          pip install requests
           git --version
           # git show --shortstat # weirdly seems to show the cumulative lines and files on GitHub Actions
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
