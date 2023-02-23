@@ -67,11 +67,13 @@ def main():
     exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
 
     # get git stats for this commit
-    cmd = f"git show --shortstat {exclusions} {commit_id}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
+    cmd = f"git show --shortstat {commit_id} {exclusions}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
     git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     git_log_out, git_log_err = git_log.communicate()
     git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
-
+    print()
+    print(git_log_out)
+    print()
     # parse git commit log
     m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
     if not m is None:
