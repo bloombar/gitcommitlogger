@@ -15,6 +15,7 @@ jobs:
           python-version: "^3.9"
       - name: Logging
         run: |
+          git show --shortstat
           echo $COMMITS > commits.json
           python ./log_commits.py  -c commits.json -u $(echo $WEB_APP_URL)
           cat data.csv
