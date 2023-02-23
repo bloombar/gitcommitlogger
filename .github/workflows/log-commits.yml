@@ -15,15 +15,5 @@ jobs:
           python-version: "^3.9"
       - name: Logging
         run: |
-          # echo "User: ${{ github.actor }}"
-          # echo "Repository: ${{ github.repository }}"
-          # echo "Event name: ${{ github.event_name }}"
-          # echo "commits: "
-          # echo $COMMITS
-          # echo "${{ toJSON(github.event.commits) }}" > data.json
-          # echo "Contents of data.json:"
-          # cat data.json
-          # echo "Github context: ${{ toJSON(github) }}"
-          # echo "Job context: ${{ toJSON(job) }}"
           python ./log_commits.py -u $WEB_APP_URL -c $COMMITS
           cat data.csv
