@@ -32,7 +32,7 @@ def get_args():
   '''
   # parse command-line arguments
   parser = argparse.ArgumentParser()
-  parser.add_argument("-c", "--commits", help="JSON array of commits from GitHub Action context variable, github.event.commits", default=[], required=True)
+  parser.add_argument("-c", "--commitfile", help="filename of JSON array of commits from GitHub Action context variable, github.event.commits", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   args = parser.parse_args()
   return args
@@ -46,9 +46,11 @@ def main():
   parser = get_args()
 
   # Get the git log
-  # commit_ids = ['482d0d1842a25e3f564aec39c4bf879b95e7fe02', '04c3a74f3b3405fac6bc27368a0a516225139b80', 'eda541d6ba86bcf2c9c1eebb67f208044aafc896']
-  commit_ids = [commit['id'] for commit in json.loads(parser.commits)] #extract commit ids from the GitHub Action context variable
-  print(commit_ids)
+  # load commit ids from file
+  with open(parser.commitfile, 'r') as commitfile:
+    commit_data = commitfile.read()
+    commit_ids = [commit['id'] for commit in json.loads(commit_data)] # extract commit ids from data from the GitHub Action context variable
+    print(commit_ids)
   logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   for commit_id in commit_ids:
     # get git stats for this commit
