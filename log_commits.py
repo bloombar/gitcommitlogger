@@ -6,6 +6,7 @@ import json
 import logging
 import logging.handlers
 import argparse
+from urllib import request
 
 def setup_logging(logfile):
   '''
@@ -99,19 +100,32 @@ def main():
 
   commit_ids = get_commit_ids(args.inputfile)
 
-  # write the CSV heading line
-  logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
-  
   # set up exclusions
   exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
 
+  # write the CSV heading line
+  logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
+  
+  # iterate over commit ids and add each to a list
+  commits_list = [] # start it off blank
   for commit_id in commit_ids:
-
+    
     # get git stats for this commit
-    commit_data = get_commit_data(commit_id, exclusions)
-    # log them
+    commit_data = get_commit_data(commit_id, exclusions) 
+
+    # add this commit to the list
+    commits_list.append(commit_data) 
+    
+    # log it to the csv data file
     logger.info(f'{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
+  # send the data to the web app URL, if any was supplied
+  if args.url:
+    # convert the list of commits to a JSON string
+    commits_json = json.dumps(commits_list)
+    # send the data to the web app in a POST request
+    r = request.post(args.url, json=commits_json)
+    print(r.status_code, r.reason)
 
 if __name__ == "__main__":
   main()
