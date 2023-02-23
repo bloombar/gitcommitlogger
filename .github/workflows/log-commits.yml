@@ -16,7 +16,7 @@ jobs:
       - name: Logging
         run: |
           # git show --shortstat # weirdly seems to show the cumulative lines and files on GitHub Actions
-          git log --stat -n $(echo ${{github.events.commits}} | jq '. | length' ) # another way to try to get just the latest commits
+          git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           python ./log_commits.py  -c commits.json -u $(echo $WEB_APP_URL)
           cat data.csv
