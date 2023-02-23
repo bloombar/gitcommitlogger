@@ -36,7 +36,8 @@ def get_args():
 
   # parse command-line arguments
   parser = argparse.ArgumentParser()
-  parser.add_argument("-c", "--commitfile", help="filename of JSON array of commits from GitHub Action context variable, github.event.commits", default='', required=True)
+  parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits)", default='', required=True)
+  parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
   args = parser.parse_args()
@@ -48,15 +49,15 @@ def get_args():
 
 def main():
 
-  # set up logging
-  logger = setup_logging('data.csv')
-
   # set up command line arguments
   args = get_args()
 
+  # set up logging
+  logger = setup_logging(args.inputfile)
+
   # Get the git log
   # load commit ids from file
-  with open(args.commitfile, 'r') as commitfile:
+  with open(args.inputfile, 'r') as commitfile:
     commit_data = commitfile.read()
     commit_ids = [commit['id'] for commit in json.loads(commit_data)] # extract commit ids from data from the GitHub Action context variable
     # print(commit_ids)
