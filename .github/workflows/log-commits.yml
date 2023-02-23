@@ -8,6 +8,7 @@ jobs:
     env:
       WEB_APP_URL: ${{ secrets.WEB_APP_URL }}
       COMMITS: ${{ toJSON(github.event.commits) }}
+      NUM_COMMITS: $(echo $COMMITS | jq '. | length' )
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -16,7 +17,8 @@ jobs:
       - name: Logging
         run: |
           # git show --shortstat # weirdly seems to show the cumulative lines and files on GitHub Actions
-          git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
+          echo $NUM_COMMITS
+          git log --stat -n $NUM_COMMITS # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           python ./log_commits.py  -c commits.json -u $(echo $WEB_APP_URL)
           cat data.csv
