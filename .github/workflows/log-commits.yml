@@ -10,6 +10,8 @@ jobs:
       COMMITS: ${{ toJSON(github.event.commits) }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: "" # fetch all history
       - uses: actions/setup-python@v3
         with:
           python-version: "^3.9"
