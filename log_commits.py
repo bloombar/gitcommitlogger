@@ -47,6 +47,48 @@ def get_args():
 
   return args
 
+def get_commit_ids(commit_datafile):
+  '''
+  Load commit ids from file.
+  @param commit_datafile: The path to the file containing the JSON array of commits.
+
+  '''
+  # load commit ids from file
+  with open(commit_datafile, 'r') as commitfile:
+    commit_data = commitfile.read()   
+    commit_ids = [commit['id'] for commit in json.loads(commit_data)] # extract commit ids from data from the GitHub Action context variable
+    # print(commit_ids)
+    return commit_ids
+
+def get_commit_data(commit_id, exclusions):
+  '''
+  Get git stats for a commit.
+  @param commit_id: The commit id.
+  @param exclusions: The files to exclude from the git stats.
+  @return: A dictionary containing the git stats for the commit.
+  '''
+  cmd = f"git show --shortstat {commit_id} {exclusions}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
+  git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  git_log_out, git_log_err = git_log.communicate()
+  git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
+  
+  # parse git commit log
+  commit_data = {} # start off blank
+  m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
+  if not m is None:
+    # basic commit info
+    commit_data['id'] = m.groups(0)[0].strip()
+    commit_data['author_name'] = m.groups(0)[1].strip()
+    commit_data['author_email'] = m.groups(0)[2].strip()
+    commit_data['date'] = m.groups(0)[4].strip()
+    commit_data['message'] = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
+    # stats
+    commit_data['files'] = m.groups(0)[7].strip()
+    commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
+    commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 else 0
+  return commit_data
+
+
 def main():
 
   # set up command line arguments
@@ -55,42 +97,21 @@ def main():
   # set up logging
   logger = setup_logging(args.outputfile)
 
-  # Get the git log
-  # load commit ids from file
-  with open(args.inputfile, 'r') as commitfile:
-    commit_data = commitfile.read()
-    commit_ids = [commit['id'] for commit in json.loads(commit_data)] # extract commit ids from data from the GitHub Action context variable
-    # print(commit_ids)
+  commit_ids = get_commit_ids(args.inputfile)
 
+  # write the CSV heading line
   logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
+  
+  # set up exclusions
+  exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
+
   for commit_id in commit_ids:
-    # set up exclusions
-    exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
 
     # get git stats for this commit
-    cmd = f"git show --shortstat {commit_id} {exclusions}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
-    git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    git_log_out, git_log_err = git_log.communicate()
-    git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
-    
-    # parse git commit log
-    m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
-    if not m is None:
-      # basic commit info
-      commit_id = m.groups(0)[0].strip()
-      commit_author_name = m.groups(0)[1].strip()
-      commit_author_email = m.groups(0)[2].strip()
-      commit_date = m.groups(0)[4].strip()
-      commit_message = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
-      # stats
-      commit_files = m.groups(0)[7].strip()
-      commit_additions = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
-      commit_deletions = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 else 0
-      # print(f"{commit_id},{commit_author_name},{commit_author_email},{commit_date},{commit_message},{commit_files},{commit_additions},{commit_deletions}")
-      logger.info(f'{commit_id},{commit_author_name},{commit_author_email},{commit_date},"{commit_message}",{commit_files},{commit_additions},{commit_deletions}')
-    else:
-      # print('no match')
-      pass
+    commit_data = get_commit_data(commit_id, exclusions)
+    # log them
+    logger.info(f'{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
+
 
 if __name__ == "__main__":
   main()
