@@ -98,7 +98,7 @@ def main():
   # set up logging
   logger = setup_logging(args.outputfile)
 
-  commit_ids = get_commit_ids(args.inputfile)
+  commit_ids = get_commit_ids(args.inputfile) # get the ids of all commits from the json file
 
   # set up exclusions
   exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
