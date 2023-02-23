@@ -71,9 +71,7 @@ def main():
     git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     git_log_out, git_log_err = git_log.communicate()
     git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
-    print()
-    print(git_log_out)
-    print()
+    
     # parse git commit log
     m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
     if not m is None:
