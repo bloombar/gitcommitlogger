@@ -30,11 +30,20 @@ def get_args():
   Parse command-line arguments.
   @return: The parsed arguments.
   '''
+
+  # default files to exclude from analysis
+  exclusions = ['package.json', 'package-lock.json', 'Pipfile', 'Pipfile.lock', 'requirements.txt', '*.jpg', '*.png', '*.gif', '*.svg', '*.pdf', '*.zip', '*.gz', '*.tar', '*.csv', '*.json', '*.txt']
+
   # parse command-line arguments
   parser = argparse.ArgumentParser()
   parser.add_argument("-c", "--commitfile", help="filename of JSON array of commits from GitHub Action context variable, github.event.commits", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
+  parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
   args = parser.parse_args()
+
+  # fix up exclusions
+  args.exclusions = re.split(r',\s*', args.exclusions) # split up comma-separated string into list
+
   return args
 
 def main():
@@ -43,18 +52,22 @@ def main():
   logger = setup_logging('data.csv')
 
   # set up command line arguments
-  parser = get_args()
+  args = get_args()
 
   # Get the git log
   # load commit ids from file
-  with open(parser.commitfile, 'r') as commitfile:
+  with open(args.commitfile, 'r') as commitfile:
     commit_data = commitfile.read()
     commit_ids = [commit['id'] for commit in json.loads(commit_data)] # extract commit ids from data from the GitHub Action context variable
-    print(commit_ids)
+    # print(commit_ids)
+
   logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   for commit_id in commit_ids:
+    # set up exclusions
+    exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
+
     # get git stats for this commit
-    cmd = f"git show --shortstat {commit_id}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
+    cmd = f"git show --shortstat {exclusions} {commit_id}" #--date=format-local:'%m/%d/%Y %H:%M:%S'"
     git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     git_log_out, git_log_err = git_log.communicate()
     git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
