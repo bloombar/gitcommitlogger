@@ -122,7 +122,7 @@ def main():
   # send the data to the web app URL, if any was supplied
   if args.url:
     # convert the list of commits to a JSON string
-    commits_json = json.dumps(commits_list)
+    commits_json = json.dumps(commits_list).decode('UTF-8') # convert bytes to string
     # send the data to the web app in a POST request
     r = requests.post(args.url, json=commits_json)
     print(r.status_code, r.reason, r.content, r.text)
