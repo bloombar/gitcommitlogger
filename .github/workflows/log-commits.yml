@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       WEB_APP_URL: ${{ secrets.WEB_APP_URL }}
+      COMMITS: ${{ toJSON(github.event.commits) }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
@@ -17,8 +18,10 @@ jobs:
           echo "User: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
           echo "Event name: ${{ github.event_name }}"
-          echo "${{ toJSON(github.event.commits) }}" > data.json
-          echo "Contents of data.json:"
-          cat data.json
-          echo "Github context: ${{ toJSON(github) }}"
-          echo "Job context: ${{ toJSON(job) }}"
+          echo "commits: "
+          echo $COMMITS
+          # echo "${{ toJSON(github.event.commits) }}" > data.json
+          # echo "Contents of data.json:"
+          # cat data.json
+          # echo "Github context: ${{ toJSON(github) }}"
+          # echo "Job context: ${{ toJSON(job) }}"
