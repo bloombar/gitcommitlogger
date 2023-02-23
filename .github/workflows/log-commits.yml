@@ -15,5 +15,5 @@ jobs:
           python-version: "^3.9"
       - name: Logging
         run: |
-          python ./log_commits.py -u $WEB_APP_URL -c $COMMITS
+          python ./log_commits.py  -c $(echo $COMMITS) -u $(echo $WEB_APP_URL)
           cat data.csv
