@@ -6,7 +6,7 @@ import json
 import logging
 import logging.handlers
 import argparse
-from urllib import request
+import requests
 
 def setup_logging(logfile):
   '''
@@ -124,7 +124,7 @@ def main():
     # convert the list of commits to a JSON string
     commits_json = json.dumps(commits_list)
     # send the data to the web app in a POST request
-    r = request.post(args.url, json=commits_json)
+    r = requests.post(args.url, json=commits_json)
     print(r.status_code, r.reason)
 
 if __name__ == "__main__":
