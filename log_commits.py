@@ -57,7 +57,7 @@ def get_commit_ids(commit_datafile):
   # load commit ids from file
   with open(commit_datafile, 'r') as commitfile:
     commits_list = json.loads(commitfile.read()) # convert to list
-    print(f'commits_list: {commits_list}')
+    # print(f'commits_list: {commits_list}')
     commit_ids = [commit['id'] for commit in commits_list if 'id' in commit.keys()] # extract commit ids from data from the GitHub Action context variable
     # print(f'commit_ids: {commit_ids}')
     return commit_ids
@@ -74,6 +74,7 @@ def get_commit_data(commit_id, exclusions):
   git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   git_log_out, git_log_err = git_log.communicate()
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
+  print(git_log_out)
   
   # parse git commit log
   commit_data = {} # start off blank
