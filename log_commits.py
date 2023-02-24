@@ -28,6 +28,16 @@ def setup_logging(logfile):
   logger.addHandler(fh)    
   return logger
 
+def get_exclusions(filename):
+  '''
+  Get a list of files to exclude from analysis.
+  @param filename: The path to the file containing the list of files to exclude.
+  @return: A list of files to exclude.
+  '''
+  with open(filename) as file:
+    lines = [line.strip() for line in file]
+    return lines
+
 def get_args():
   '''
   Parse command-line arguments.
@@ -35,7 +45,7 @@ def get_args():
   '''
 
   # default files to exclude from analysis
-  exclusions = ['package.json', 'package-lock.json', 'Pipfile', 'Pipfile.lock', 'requirements.txt', '*.jpg', '*.png', '*.gif', '*.svg', '*.pdf', '*.zip', '*.gz', '*.tar', '*.csv', '*.json', '*.txt']
+  exclusions = get_exclusions('.logsignore')
 
   # parse command-line arguments
   parser = argparse.ArgumentParser()
