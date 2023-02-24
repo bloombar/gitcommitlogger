@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # fetch all history, not just everything in a single commit
+          fetch-depth: 0 # this is important so git fetches all history.. the actions/checkout by default fetches all history as one commit which throws off stats
       - uses: actions/setup-python@v3
         with:
           python-version: "^3.9"
@@ -23,6 +23,6 @@ jobs:
           git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S'
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
-          # cat commits.json
-          python ./log_commits.py -i commits.json -o data.csv -u $(echo $WEB_APP_URL)
-          # cat data.csv
+          # cat commits.json # debugging
+          python ./log_commits.py -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL)
+          # cat data.csv # debugging
