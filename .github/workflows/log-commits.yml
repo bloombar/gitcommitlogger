@@ -22,5 +22,6 @@ jobs:
           git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S'
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
+          cat commits.json
           python ./log_commits.py -i commits.json -o data.csv -u $(echo $WEB_APP_URL)
           cat data.csv
