@@ -94,7 +94,7 @@ def get_commit_data(commit_id, exclusions):
     local_tz = pytz.timezone("America/New_York")
     unix_time = int(commit_data['date']) # as int
     utc_time = datetime.utcfromtimestamp(unix_time)
-    commit_data['date'] = datetime.strptime(utc_time, '%m/%d/%Y %H:%MZ') # formatted
+    commit_data['date'] = datetime.strptime(str(utc_time), '%m/%d/%Y %H:%MZ') # formatted
     commit_data['date'] = commit_data['date'].replace(tzinfo=pytz.utc).astimezone(local_tz)
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
