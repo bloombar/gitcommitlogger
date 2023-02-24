@@ -57,9 +57,10 @@ def get_commit_ids(commit_datafile):
   # load commit ids from file
   with open(commit_datafile, 'r') as commitfile:
     commit_data = commitfile.read()   
-    commit_dict = json.loads(commit_data)
-    commit_ids = [commit['id'] for commit in commit_dict if 'id' in commit_dict.keys()] # extract commit ids from data from the GitHub Action context variable
-    # print(commit_ids)
+    commits_list = json.loads(commit_data) # convert to list
+    print(f'commits_list: {commits_list}')
+    commit_ids = [commit['id'] for commit in commits_list] # extract commit ids from data from the GitHub Action context variable
+    # print(f'commit_ids: {commit_ids}')
     return commit_ids
 
 def get_commit_data(commit_id, exclusions):
