@@ -107,8 +107,8 @@ def get_commit_data(commit_id, exclusions):
     commit_data['date'] = tz_time.strftime('%m/%d/%Y %H:%M') # formatted as nice string good for Google Sheets date field
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
-    commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
-    commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 else 0
+    commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 and type(m.groups(0)[9])==str else 0
+    commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 and type(m.groups(0)[11])==str else 0
   # print(f'commit_data: {commit_data}')
   return commit_data
 
