@@ -94,7 +94,7 @@ def get_commit_data(commit_id, exclusions):
     local_tz = pytz.timezone("America/New_York")
     utc_time = datetime.utcfromtimestamp(int(commit_data['date'])) # convert unix time to utc datetime
     tz_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz) # convert to NY time
-    commit_data['date'] = tz_time.strftime('%m/%d/%Y %H:%MZ') # formatted as nice string good for Google Sheets date field
+    commit_data['date'] = tz_time.strftime('%m/%d/%Y %H:%M') # formatted as nice string good for Google Sheets date field
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
