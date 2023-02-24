@@ -76,6 +76,7 @@ def get_commit_data(commit_id, exclusions):
   git_log_out, git_log_err = git_log.communicate()
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
   print(f'git_log_out: {git_log_out}')
+  print(f'git_log_err: {git_log_err}')
 
   # parse git commit log
   commit_data = {} # start off blank
