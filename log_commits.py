@@ -7,6 +7,7 @@ import logging
 import logging.handlers
 import argparse
 from datetime import datetime
+import pytz
 import requests
 
 def setup_logging(logfile):
@@ -90,7 +91,9 @@ def get_commit_data(commit_id, exclusions):
     commit_data['date'] = m.groups(0)[4].strip()
     commit_data['message'] = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
     # fix the date
-    commit_data['date'] = datetime.utcfromtimestamp(int(commit_data['date'])).strftime('%m/%d/%Y %H:%M')
+    local_tz = pytz.timezone("America/New_York")
+    commit_data['date'] = datetime.utcfromtimestamp(int(commit_data['date'])).strftime('%m/%d/%Y %H:%MZ')
+    commit_data['date'] = commit_data['date'].replace(tzinfo=pytz.utc).astimezone(local_tz)
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0

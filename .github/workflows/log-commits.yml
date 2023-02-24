@@ -18,6 +18,7 @@ jobs:
       - name: Logging
         run: |
           pip install requests
+          pip install pytz
           git --version
           git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S'
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
