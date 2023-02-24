@@ -6,6 +6,7 @@ import json
 import logging
 import logging.handlers
 import argparse
+from datetime import datetime
 import requests
 
 def setup_logging(logfile):
@@ -69,14 +70,14 @@ def get_commit_data(commit_id, exclusions):
   @param exclusions: The files to exclude from the git stats.
   @return: A dictionary containing the git stats for the commit.
   '''
-  print(f'commit_id: {commit_id}')
+  # print(f'commit id: {commit_id}')
   date_format = r'--date=unix' #format:"%m/%d/%Y %H:%M" # formatted in a way that works well in Google Sheets
   cmd = f"git show {date_format} --shortstat {commit_id} {exclusions}"
   git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   git_log_out, git_log_err = git_log.communicate()
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
-  print(f'git_log_out: {git_log_out}')
-  print(f'git_log_err: {git_log_err}')
+  # print(f'git output: {git_log_out}')
+  # print(f'git error: {git_log_err}')
 
   # parse git commit log
   commit_data = {} # start off blank
@@ -88,11 +89,13 @@ def get_commit_data(commit_id, exclusions):
     commit_data['author_email'] = m.groups(0)[2].strip()
     commit_data['date'] = m.groups(0)[4].strip()
     commit_data['message'] = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
+    # fix the date
+    commit_data['date'] = datetime.utcfromtimestamp(int(commit_data['date'])).strftime('%m/%d/%Y %H:%M')
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
     commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 else 0
-  print(f'commit_data: {commit_data}')
+  # print(f'commit_data: {commit_data}')
   return commit_data
 
 
