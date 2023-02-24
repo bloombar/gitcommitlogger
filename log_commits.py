@@ -92,10 +92,9 @@ def get_commit_data(commit_id, exclusions):
     commit_data['message'] = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
     # fix the date
     local_tz = pytz.timezone("America/New_York")
-    unix_time = int(commit_data['date']) # as int
-    utc_time = datetime.utcfromtimestamp(unix_time)
-    commit_data['date'] = datetime.strptime(str(utc_time), '%m/%d/%Y %H:%MZ') # formatted
-    commit_data['date'] = commit_data['date'].replace(tzinfo=pytz.utc).astimezone(local_tz)
+    utc_time = datetime.utcfromtimestamp(int(commit_data['date'])) # convert unix time to utc datetime
+    tz_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz) # convert to NY time
+    commit_data['date'] = tz_time.strftime('%m/%d/%Y %H:%MZ') # formatted as nice string good for Google Sheets date field
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
