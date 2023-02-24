@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # fetch all history
+          fetch-depth: 0 # fetch all history, not just everything in a single commit
       - uses: actions/setup-python@v3
         with:
           python-version: "^3.9"
@@ -19,8 +19,8 @@ jobs:
         run: |
           pip install requests
           git --version
-          # git show --shortstat # weirdly seems to show the cumulative lines and files on GitHub Actions
-          git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
+          git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S'
+          # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           python ./log_commits.py -i commits.json -o data.csv -u $(echo $WEB_APP_URL)
           cat data.csv
