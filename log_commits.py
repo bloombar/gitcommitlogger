@@ -124,9 +124,9 @@ def main():
   commit_ids = get_commit_ids(args.inputfile) # get the ids of all commits from the json file
 
   # set up exclusions
-  exclusions = '-- . ' + ' '.join(['":(exclude,glob)**/{}"'.format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
+  exclusions = '-- . ' + ' '.join(["':(exclude){}'".format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
   print(f'exclusions: {exclusions}')
-  
+
   # write the CSV heading line
   logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   
