@@ -57,7 +57,7 @@ def get_args():
 
   # fix up exclusions
   args.exclusions = re.split(r',\s*', args.exclusions) # split up comma-separated string into list
-  print(f'exclusions: {args.exclusions}')
+  # print(f'exclusions: {args.exclusions}')
   return args
 
 def get_commit_ids(commit_datafile):
@@ -126,7 +126,7 @@ def main():
 
   # set up exclusions
   exclusions = '-- . ' + ' '.join(["':(exclude,glob){}'".format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
-  print(f'exclusions: {exclusions}')
+  # print(f'exclusions: {exclusions}')
 
   # write the CSV heading line
   logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
