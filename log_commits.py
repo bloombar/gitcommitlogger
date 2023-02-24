@@ -74,8 +74,8 @@ def get_commit_data(commit_id, exclusions):
   git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   git_log_out, git_log_err = git_log.communicate()
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
-  print(git_log_out)
-  
+  # print(f'git_log_out: {git_log_out}')
+
   # parse git commit log
   commit_data = {} # start off blank
   m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
@@ -90,6 +90,7 @@ def get_commit_data(commit_id, exclusions):
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 else 0
     commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 else 0
+  print(f'commit_data: {commit_data}')
   return commit_data
 
 
