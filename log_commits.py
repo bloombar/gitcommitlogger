@@ -70,8 +70,8 @@ def get_commit_data(commit_id, exclusions):
   @return: A dictionary containing the git stats for the commit.
   '''
   print(f'commit_id: {commit_id}')
-  date_format = r"--date=format-local:'%m/%d/%Y %H:%M:%S'" # formatted in a way that works well in Google Sheets
-  cmd = f"git show --shortstat {commit_id} {exclusions}"
+  date_format = r"--date=format-local:'%m/%d/%Y %H:%M'" # formatted in a way that works well in Google Sheets
+  cmd = f"git show {date_format} --shortstat {commit_id} {exclusions}"
   git_log = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   git_log_out, git_log_err = git_log.communicate()
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
