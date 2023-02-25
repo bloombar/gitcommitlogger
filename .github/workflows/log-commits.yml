@@ -15,14 +15,23 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: "^3.9"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --user pipenv
+          pipenv install pytest
+          pipenv install
+      - name: Build package
+        run: |
+          pipenv run python -m build .
+      - name: Turn on 'editable' mode
+        run: |
+          pipenv install -e .
       - name: Logging
         run: |
-          pip install requests
-          pip install pytz
           git --version
           git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S'
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           # cat commits.json # debugging
-          python ./log_commits.py -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL)
-          # cat data.csv # debugging
+          gitcommitslogger -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL)
