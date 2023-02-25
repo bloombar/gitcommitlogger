@@ -11,7 +11,7 @@ jobs:
       COMMIT_LOG_API: ${{ secrets.COMMIT_LOG_API }}
       COMMITS: ${{ toJSON(github.event.commits) }}
       REPOSITORY_URL: ${{ github.repositoryUrl }}
-      EVENT_TYPE: ${{ github.event_type }}
+      EVENT_TYPE: ${{ github.event_name }}
     steps:
       - uses: actions/checkout@v3
         with:
