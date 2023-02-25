@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gitcommitlogger"
+description = "Logs statistics for specific commits in CSV form and optionally sends them as JSON to a web api."
+version = "0.0.1"
+authors = [
+  { name="Foo Barstein", email="foo.barstein@onepotcooking.com" },
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+keywords = ["git", "developer", "commits", "analysis", "report", "logging"]
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.urls]
+"Homepage" = "https://github.com/bloombar/gitcommitlogger"
+"Repository" = "https://github.com/bloombar/gitcommitlogger.git"
+"Bug Tracker" = "https://github.com/bloombar/gitcommitlogger/issues"
+
+[project.scripts]
+gitcommitlogger = "gitcommitlogger.__main__:main"

@@ -1,5 +1,6 @@
 #!/usr/bin/env python 
 
+import os
 import subprocess
 import re
 import json
@@ -16,6 +17,9 @@ def setup_logging(logfile):
   @param logfile: The path to the log file.
   @return: The logger object.
   '''
+  # delete any existing file
+  if os.path.exists(logfile):
+    os.remove(logfile)
   # Setup logging
   logger = logging.getLogger('log_commits')
   logger.setLevel(logging.DEBUG)
@@ -45,7 +49,9 @@ def get_args():
   '''
 
   # default files to exclude from analysis
-  exclusions = get_exclusions('.logsignore')
+  current_dir = os.path.dirname(os.path.realpath(__file__)) # the current directory
+  exclusion_file = os.path.join(current_dir, '.logsignore')
+  exclusions = get_exclusions(exclusion_file)
 
   # parse command-line arguments
   parser = argparse.ArgumentParser()
@@ -53,11 +59,11 @@ def get_args():
   parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
+  parser.add_argument("-v", "--verbose", help="Whether to output debugging info", default=False, action="store_true")
   args = parser.parse_args()
 
   # fix up exclusions
   args.exclusions = re.split(r',\s*', args.exclusions) # split up comma-separated string into list
-  # print(f'exclusions: {args.exclusions}')
   return args
 
 def get_commit_ids(commit_datafile):
@@ -113,6 +119,15 @@ def get_commit_data(commit_id, exclusions):
   # print(f'commit_data: {commit_data}')
   return commit_data
 
+def verboseprint(verbose, *args):
+  '''
+  Print only if verbose flag is set.
+  '''
+  if verbose:
+      v = print
+  else:
+      v = lambda *args: None
+  v(*args)
 
 def main():
 
@@ -144,13 +159,16 @@ def main():
     # log it to the csv data file
     logger.info(f'{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
+  # debugging print
+  verboseprint(args.verbose, f'commits_list: {commits_list}')
+
   # send the data to the web app URL, if any was supplied
   if args.url:
     # convert the list of commits to a JSON string
     commits_json = json.dumps(commits_list)
     # send the data to the web app in a POST request
     r = requests.post(args.url, json=commits_list)
-    print(r.status_code, r.reason, r.content, r.text) # really the one
+    verboseprint(args.verbose, 'web app response: ', r.status_code, r.reason, r.content, r.text) # really the one
 
 if __name__ == "__main__":
   main()
