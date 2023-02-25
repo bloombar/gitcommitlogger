@@ -154,6 +154,10 @@ def main():
     # get git stats for this commit
     commit_data = get_commit_data(commit_id, exclusions) 
 
+    # add repository url, if present
+    if args.repository_url:
+      commit_data['repository_url'] = args.repository_url
+
     # add this commit to the list
     commits_list.append(commit_data) 
     
