@@ -60,6 +60,7 @@ def get_args():
   parser.add_argument("-d", "--event_date", help="The date the event is being triggered.", default='', required=False)
   parser.add_argument("-un", "--user_name", help="The name of the user performing the event.", default='', required=False)
   parser.add_argument("-ue", "--user_email", help="The email of the user performing the event.", default='', required=False)
+  parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits, during push events.)", default='', required=False)
   parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit.", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
