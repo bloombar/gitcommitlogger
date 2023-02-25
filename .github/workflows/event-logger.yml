@@ -13,6 +13,8 @@ jobs:
       COMMITS: ${{ toJSON(github.event.commits) }}
       REPOSITORY_URL: ${{ github.repositoryUrl }}
       EVENT_TYPE: ${{ github.event_name }}
+      EVENT_ACTION: ${{ github.event.action }}
+      PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
     steps:
@@ -41,6 +43,8 @@ jobs:
           # make sure the environment variales are present
           echo $REPOSITORY_URL
           echo $EVENT_TYPE
+          echo $EVENT_ACTION
+          echo $PR_MERGED
           echo $PR_CREATED_AT
           echo $PR_CLOSED_AT
           echo $COMMITS
@@ -57,6 +61,7 @@ jobs:
           cat commits.json # debugging
           pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
       - name: Log push
+        if: github.event_name == 'push'
         run: |
           echo $COMMITS > commits.json
           cat commits.json # debugging
