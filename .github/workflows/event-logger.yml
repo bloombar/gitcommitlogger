@@ -1,7 +1,7 @@
 name: log github events
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, test2]
   pull_request:
     types: [opened, closed]
     branches: ["*"]
@@ -14,11 +14,11 @@ jobs:
       REPOSITORY_URL: ${{ github.repositoryUrl }}
       EVENT_TYPE: ${{ github.event_name }}
       EVENT_ACTION: ${{ github.event.action }}
-      EVENT_USERNAME: ${{ github.event.pull_request.user }}
-      EVENT_EMAIL: ${{ github.event.pull_request.email }}
       PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
+      EVENT_USERNAME: ${{ github.event.pull_request.user }}
+      EVENT_EMAIL: ${{ github.event.pull_request.email }}
     steps:
       - uses: actions/checkout@v3
         with:
