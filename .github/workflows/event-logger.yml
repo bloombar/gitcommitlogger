@@ -33,8 +33,7 @@ jobs:
         run: |
           pipenv run python -m build .
       - name: Turn on 'editable' mode
-        run: |
-          pipenv install -e .
+        run: pipenv install -e .
       - name: Debugging
           # make sure the environment variales are present
           echo $REPOSITORY_URL
