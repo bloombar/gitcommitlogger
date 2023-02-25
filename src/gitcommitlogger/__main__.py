@@ -58,7 +58,8 @@ def get_args():
   parser.add_argument("-r", "--repository_url", help="URL of the github repository upon which this logger is being run", default='', required=False)
   parser.add_argument("-t", "--event_type", help="The type of event that is triggering this logger to be run, e.g. 'push' or 'pull_request', from github.event_type.", default='', required=False)
   parser.add_argument("-d", "--event_date", help="The date the event is being triggered.", default='', required=False)
-  parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits, during push events.)", default='', required=False)
+  parser.add_argument("-un", "--user_name", help="The name of the user performing the event.", default='', required=False)
+  parser.add_argument("-ue", "--user_email", help="The email of the user performing the event.", default='', required=False)
   parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit.", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
@@ -155,14 +156,14 @@ def main():
     pull_request_data = {
       'repository_url': args.repository_url,
       'event_type': args.event_type,
-      'commit_id': '',
-      'commit_author_name': args.pr_author_name,
-      'commit_author_email': args.pr_author_email,
-      'commit_date': args.event_date,
-      'commit_message': '',
-      'commit_files': '',
-      'commit_additions': '',
-      'commit_deletions': ''
+      'id': '',
+      'author_name': args.user_name,
+      'author_email': args.user_email,
+      'date': args.event_date,
+      'message': '',
+      'files': '',
+      'additions': '',
+      'deletions': ''
     }
 
     # add this pull request to the list
