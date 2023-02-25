@@ -28,9 +28,11 @@ jobs:
           pip install pytz
           pip install requests
           pip install gitcommitlogger
-      - name: Build logger in editable mode to help debug it
+      - name: Build package from latest code
         run: |
           pipenv run python -m build .
+      - name: Turn on 'editable' mode
+        run: |
           pipenv install -e .
       - name: Debugging
           # make sure the environment variales are present
