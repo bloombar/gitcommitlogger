@@ -10,6 +10,8 @@ const getConfig = () => {
   return {
     sheetName: "GitHub Logs",
     sheetFields: [
+      "repository",
+      "event",
       "id",
       "username",
       "email",
@@ -34,6 +36,26 @@ const getSheet = () => {
   return sheet
 }
 
+function doGet(e) {
+  const config = getConfig()
+  const sheet = getSheet()
+  const res = {
+    type: "get",
+    e: e,
+  }
+  sheet.appendRow([
+    "get",
+    "a man",
+    "a plan",
+    "panama",
+    JSON.stringify(e.parameters, null, 3),
+  ])
+  console.log(JSON.stringify(res, null, 3))
+  return ContentService.createTextOutput(res).setMimeType(
+    ContentService.MimeType.JSON
+  )
+}
+
 function doPost(e) {
   console.log("Incoming post request")
   console.log(JSON.stringify(e, null, 2))
@@ -50,6 +72,8 @@ function doPost(e) {
       console.log(JSON.stringify(commit, null, 2))
       // append data array to sheet as new row
       const row = [
+        commit["repository_url"],
+        commit["event_type"],
         commit["id"],
         commit["author_name"],
         commit["author_email"],
