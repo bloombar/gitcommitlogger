@@ -27,6 +27,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --user pipenv
           pip install pytz
+          pip install build
           pip install requests
           pip install gitcommitlogger
       - name: Build package from latest code
