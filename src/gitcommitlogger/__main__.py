@@ -55,6 +55,7 @@ def get_args():
 
   # parse command-line arguments
   parser = argparse.ArgumentParser()
+  parser.add_argument("-r", "--repository_url", help="URL of the github repository upon which this logger is being run", default='', required=False)
   parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits)", default='', required=True)
   parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
@@ -144,7 +145,7 @@ def main():
   # print(f'exclusions: {exclusions}')
 
   # write the CSV heading line
-  logger.info('commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
+  logger.info('repository_url,commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   
   # iterate over commit ids and add each to a list
   commits_list = [] # start it off blank
@@ -157,7 +158,7 @@ def main():
     commits_list.append(commit_data) 
     
     # log it to the csv data file
-    logger.info(f'{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
+    logger.info(f'{args.repository_url},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
   # debugging print
   verboseprint(args.verbose, f'commits_list: {commits_list}')

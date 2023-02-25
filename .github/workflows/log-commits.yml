@@ -8,6 +8,7 @@ jobs:
     env:
       COMMIT_LOG_API: ${{ secrets.COMMIT_LOG_API }}
       COMMITS: ${{ toJSON(github.event.commits) }}
+      REPOSITORY_URL: ${{ github.repositoryUrl }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -27,4 +28,4 @@ jobs:
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           cat commits.json # debugging
-          gitcommitlogger -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+          gitcommitlogger -r $(echo $REPOSITORY_URL) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
