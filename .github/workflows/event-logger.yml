@@ -1,8 +1,9 @@
-name: log commits
+name: log github events
 on:
   push:
     branches: [main, master]
   pull_request:
+    types: [opened, closed]
     branches: ["*"]
 jobs:
   log:
@@ -12,6 +13,8 @@ jobs:
       COMMITS: ${{ toJSON(github.event.commits) }}
       REPOSITORY_URL: ${{ github.repositoryUrl }}
       EVENT_TYPE: ${{ github.event_name }}
+      PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
+      PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -25,11 +28,30 @@ jobs:
           pip install pytz
           pip install requests
           pip install gitcommitlogger
-      - name: Logging
+      - name: Build logger in editable mode to help debug it
         run: |
-          echo $REPOSITORY_URL
+          pipenv run python -m build .
+          pipenv install -e .
+      - name: Debugging
+          echo "repository url: $(echo $REPOSITORY_URL)" # make sure the repo URL is present
+          echo "event type: $(echo $EVENT_TYPE)""
+          echo "pull request created at: $(echo $PR_CREATED_AT)"
+          echo "pull request closed at: $(echo $PR_CLOSED_AT)"
+          echo "commits: $(echo $COMMITS)"
           # git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S' # show latest commit log
-          git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
+          git log --stat -n $(echo $COMMITS | jq '. | length' ) # a better way to show just the latest commits
+      - name: Log pull request opened
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        run: |
+          gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_opened -d $(echo $PR_CREATED_AT) -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+      - name: Log pull request closed and merged
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          echo $COMMITS > commits.json
+          cat commits.json # debugging
+          gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+      - name: Log push
+        run: |
           echo $COMMITS > commits.json
           cat commits.json # debugging
           gitcommitlogger -r $(echo $REPOSITORY_URL) -t $(echo $EVENT_TYPE) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
