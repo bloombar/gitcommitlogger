@@ -33,11 +33,12 @@ jobs:
           pipenv run python -m build .
           pipenv install -e .
       - name: Debugging
-          echo "repository url: $(echo $REPOSITORY_URL)" # make sure the repo URL is present
-          echo "event type: $(echo $EVENT_TYPE)""
-          echo "pull request created at: $(echo $PR_CREATED_AT)"
-          echo "pull request closed at: $(echo $PR_CLOSED_AT)"
-          echo "commits: $(echo $COMMITS)"
+          # make sure the environment variales are present
+          echo $REPOSITORY_URL
+          echo $EVENT_TYPE
+          echo $PR_CREATED_AT
+          echo $PR_CLOSED_AT
+          echo $COMMITS
           # git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S' # show latest commit log
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # a better way to show just the latest commits
       - name: Log pull request opened
