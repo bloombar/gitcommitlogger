@@ -26,5 +26,5 @@ jobs:
           # git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S' # show latest commit log
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
-          # cat commits.json # debugging
+          cat commits.json # debugging
           gitcommitlogger -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
