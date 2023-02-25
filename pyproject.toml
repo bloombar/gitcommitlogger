@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "gitcommitlogger"
 description = "Logs statistics for specific commits in CSV form and optionally sends them as JSON to a web api."
-version = "1.0.5"
+version = "1.1.0"
 authors = [
   { name="Foo Barstein", email="foo.barstein@onepotcooking.com" },
 ]
