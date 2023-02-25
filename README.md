@@ -6,7 +6,7 @@ A Python package that logs the details of a specific set of commits made to a Gi
 
 This package is designed to be used in a GitHub Actions workflow, where the workflow is triggered by a push to the repository. Details of the commits included in the push will then be logged.
 
-A sample GitHub Actions workflow is included in `.github/workflows/`[`log-commits.yml`](./.github/workflows/log-commits.yml). This example stores the logs into a Google Sheet by first posting them as `JSON` data to a web app attached to the Google Sheet. The URL of the web app is presumed be stored in a GitHub Actions Secret named `COMMIT_LOG_API`.
+A sample GitHub Actions workflow is included in `.github/workflows/`[`event-logger.yml`](./.github/workflows/event-logger.yml). This example stores the logs into a Google Sheet by first posting them as `JSON` data to a web app attached to the Google Sheet. The URL of the web app is presumed be stored in a GitHub Actions Secret named `COMMIT_LOG_API`.
 
 ## Google Apps Scripts integration
 
