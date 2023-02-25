@@ -156,6 +156,7 @@ def main():
 
     # add repository url, if present
     if args.repository_url:
+      verboseprint(args.verbose, f'adding repository_url: {args.repository_url}')
       commit_data['repository_url'] = args.repository_url
 
     # add this commit to the list
