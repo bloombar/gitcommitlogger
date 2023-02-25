@@ -6,7 +6,7 @@ jobs:
   log:
     runs-on: ubuntu-latest
     env:
-      WEB_APP_URL: ${{ secrets.WEB_APP_URL }}
+      COMMIT_LOG_API: ${{ secrets.COMMIT_LOG_API }}
       COMMITS: ${{ toJSON(github.event.commits) }}
     steps:
       - uses: actions/checkout@v3
@@ -34,4 +34,4 @@ jobs:
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           # cat commits.json # debugging
-          pipenv run gitcommitlogger -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL) -v
+          pipenv run gitcommitlogger -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
