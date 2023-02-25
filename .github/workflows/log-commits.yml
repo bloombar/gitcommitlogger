@@ -34,4 +34,4 @@ jobs:
           # git log --stat -n $(echo $COMMITS | jq '. | length' ) # another way to try to get just the latest commits
           echo $COMMITS > commits.json
           # cat commits.json # debugging
-          gitcommitslogger -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL)
+          gitcommitlogger -i commits.json -o commit_stats.csv -u $(echo $WEB_APP_URL)
