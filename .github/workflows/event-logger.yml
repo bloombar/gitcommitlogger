@@ -26,10 +26,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --user pipenv
-          pip install pytz
-          pip install build
-          pip install requests
-          pip install gitcommitlogger
+          pipenve install pytz
+          pipenve install build
+          pipenve install requests
+          pipenve install gitcommitlogger
       - name: Build package from latest code
         run: |
           pipenv run python -m build .
@@ -49,15 +49,15 @@ jobs:
       - name: Log pull request opened
         if: github.event_name == 'pull_request' && github.event.action == 'opened'
         run: |
-          gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_opened -d $(echo $PR_CREATED_AT) -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_opened -d $(echo $PR_CREATED_AT) -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
       - name: Log pull request closed and merged
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
           echo $COMMITS > commits.json
           cat commits.json # debugging
-          gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
       - name: Log push
         run: |
           echo $COMMITS > commits.json
           cat commits.json # debugging
-          gitcommitlogger -r $(echo $REPOSITORY_URL) -t $(echo $EVENT_TYPE) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t $(echo $EVENT_TYPE) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
