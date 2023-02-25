@@ -5,10 +5,10 @@ name = "pypi"
 
 [packages]
 build = "*"
-pytest = "*"
 twine = "*"
 requests = "*"
 pytz = "*"
+pytest = "*"
 gitcommitlogger = {editable = true, path = "."}
 
 [dev-packages]

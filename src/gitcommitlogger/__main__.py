@@ -56,6 +56,7 @@ def get_args():
   # parse command-line arguments
   parser = argparse.ArgumentParser()
   parser.add_argument("-r", "--repository_url", help="URL of the github repository upon which this logger is being run", default='', required=False)
+  parser.add_argument("-t", "--event_type", help="The type of event that is triggering this logger to be run, e.g. 'push' or 'pull_request', from github.event_type.", default='', required=False)
   parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits)", default='', required=True)
   parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
@@ -145,7 +146,7 @@ def main():
   # print(f'exclusions: {exclusions}')
 
   # write the CSV heading line
-  logger.info('repository_url,commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
+  logger.info('repository_url,event_type,commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   
   # iterate over commit ids and add each to a list
   commits_list = [] # start it off blank
@@ -156,14 +157,19 @@ def main():
 
     # add repository url, if present
     if args.repository_url:
-      verboseprint(args.verbose, f'adding repository_url: {args.repository_url}')
+      verboseprint(args.verbose, f'repository_url: {args.repository_url}')
       commit_data['repository_url'] = args.repository_url
+
+    # add event type, if present
+    if args.event_type:
+      verboseprint(args.verbose, f'event_type: {args.event_type}')
+      commit_data['event_type'] = args.event_type
 
     # add this commit to the list
     commits_list.append(commit_data) 
     
     # log it to the csv data file
-    logger.info(f'{args.repository_url},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
+    logger.info(f'{args.repository_url},{commit_data["event_type"]},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
   # debugging print
   verboseprint(args.verbose, f'commits_list: {commits_list}')
