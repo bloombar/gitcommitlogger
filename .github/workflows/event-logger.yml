@@ -26,10 +26,10 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --user pipenv
-          pipenve install pytz
-          pipenve install build
-          pipenve install requests
-          pipenve install gitcommitlogger
+          pipenv install pytz
+          pipenv install build
+          pipenv install requests
+          pipenv install gitcommitlogger
       - name: Build package from latest code
         run: |
           pipenv run python -m build .
