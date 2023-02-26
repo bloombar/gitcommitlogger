@@ -85,13 +85,7 @@ def get_commit_ids(commit_datafile):
     # print(f'commit_ids: {commit_ids}')
     return commit_ids
 
-def get_commit_data(commit_id, exclusions):
-  '''
-  Get git stats for a commit.
-  @param commit_id: The commit id.
-  @param exclusions: The files to exclude from the git stats.
-  @return: A dictionary containing the git stats for the commit.
-  '''
+def get_git_output(commit_id, exclusions):
   # print(f'commit id: {commit_id}')
   date_format = r'--date=unix' #format:"%m/%d/%Y %H:%M" # formatted in a way that works well in Google Sheets
   cmd = f"git show {date_format} --shortstat {commit_id} {exclusions}"
@@ -101,7 +95,15 @@ def get_commit_data(commit_id, exclusions):
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
   # print(f'git output: {git_log_out}')
   # print(f'git error: {git_log_err}')
+  return git_log_out
 
+def get_commit_data(git_log_out):
+  '''
+  Get git stats for a commit.
+  @param commit_id: The commit id.
+  @param exclusions: The files to exclude from the git stats.
+  @return: A dictionary containing the git stats for the commit.
+  '''
   # parse git commit log
   commit_data = {} # start off blank
   m = re.match(r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?", git_log_out)
@@ -182,7 +184,9 @@ def main():
     for commit_id in commit_ids:
 
       # get git stats for this commit
-      commit_data = get_commit_data(commit_id, exclusions) 
+      git_log_out = get_git_output(commit_id, exclusions)
+      verboseprint(args.verbose, f'git output: {git_log_out}')
+      commit_data = get_commit_data(git_log_out) 
 
       # add repository url, if present
       if args.repository_url:
