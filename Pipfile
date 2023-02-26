@@ -10,6 +10,7 @@ requests = "*"
 pytz = "*"
 pytest = "*"
 gitcommitlogger = {editable = true, path = "."}
+python-dateutil = "*"
 
 [dev-packages]
 
