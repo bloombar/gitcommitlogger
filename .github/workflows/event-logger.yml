@@ -14,11 +14,11 @@ jobs:
       REPOSITORY_URL: ${{ github.repositoryUrl }}
       EVENT_TYPE: ${{ github.event_name }}
       EVENT_ACTION: ${{ github.event.action }}
+      EVENT_USERNAME: ${{ github.event.actor }}
+      EVENT_EMAIL: ${{ github.event.pull_request.user.email }}
       PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
-      EVENT_USERNAME: ${{ github.event.pull_request.user.name }}
-      EVENT_EMAIL: ${{ github.event.pull_request.user.email }}
     steps:
       - uses: actions/checkout@v3
         with:
