@@ -140,7 +140,7 @@ def fix_date(bad_date):
     bad_date_int = int(parsed_t.strftime('%s'))
 
   local_tz = pytz.timezone("America/New_York")
-  utc_time = datetime.utcfromtimestamp(bad_date) # convert unix time to utc datetime
+  utc_time = datetime.utcfromtimestamp(bad_date_int) # convert unix time to utc datetime
   tz_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz) # convert to NY time
   good_date = tz_time.strftime('%m/%d/%Y %H:%M') # formatted as nice string good for Google Sheets date field
   return good_date
