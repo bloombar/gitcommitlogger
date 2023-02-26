@@ -17,8 +17,8 @@ jobs:
       PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
-      EVENT_USERNAME: ${{ github.event.user }}
-      EVENT_EMAIL: ${{ github.event.email }}
+      EVENT_USERNAME: ${{ github.event.pull_request.user.name }}
+      EVENT_EMAIL: ${{ github.event.pull_request.user.email }}
     steps:
       - uses: actions/checkout@v3
         with:
