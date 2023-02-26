@@ -181,7 +181,7 @@ def main():
       'id': '',
       'author_name': args.user_name,
       'author_email': args.user_email,
-      'date': args.event_date,
+      'date': fix_date(args.event_date),
       'message': '',
       'files': '',
       'additions': '',
