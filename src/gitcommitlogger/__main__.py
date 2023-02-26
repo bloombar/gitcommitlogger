@@ -8,6 +8,7 @@ import logging
 import logging.handlers
 import argparse
 from datetime import datetime
+import dateutil.parser as dp
 import pytz
 import requests
 
@@ -115,16 +116,34 @@ def get_commit_data(git_log_out):
     commit_data['date'] = m.groups(0)[4].strip()
     commit_data['message'] = m.groups(0)[5].replace('[,"]', '').strip() # remove any quotes and commas to make a valid csv
     # fix the date
-    local_tz = pytz.timezone("America/New_York")
-    utc_time = datetime.utcfromtimestamp(int(commit_data['date'])) # convert unix time to utc datetime
-    tz_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz) # convert to NY time
-    commit_data['date'] = tz_time.strftime('%m/%d/%Y %H:%M') # formatted as nice string good for Google Sheets date field
+    commit_data['date'] = fix_date(commit_data['date'])
     # stats
     commit_data['files'] = m.groups(0)[7].strip()
     commit_data['additions'] = m.groups(0)[9].strip() if len(m.groups(0)) > 9 and type(m.groups(0)[9])==str else 0
     commit_data['deletions'] = str(m.groups(0)[11]).strip() if len(m.groups(0)) > 11 and type(m.groups(0)[11])==str else 0
   # print(f'commit_data: {commit_data}')
   return commit_data
+
+def fix_date(bad_date):
+  '''
+  Fix the date format to be easier to parse by Google Sheets
+  @param date: The date to fix, either in unix time or ISO format
+  @return: The fixed date in a format that works well in Google Sheets
+  '''
+  try:
+    # date from git commits is in unix time
+    bad_date_int = int(bad_date)
+  except ValueError:
+    # date from github actions context is in ISO format
+    iso_date = bad_date
+    parsed_t = dp.parse(iso_date)
+    bad_date_int = int(parsed_t.strftime('%s'))
+
+  local_tz = pytz.timezone("America/New_York")
+  utc_time = datetime.utcfromtimestamp(bad_date_int) # convert unix time to utc datetime
+  tz_time = utc_time.replace(tzinfo=pytz.utc).astimezone(local_tz) # convert to NY time
+  good_date = tz_time.strftime('%m/%d/%Y %H:%M') # formatted as nice string good for Google Sheets date field
+  return good_date
 
 def verboseprint(verbose, *args):
   '''
@@ -162,7 +181,7 @@ def main():
       'id': '',
       'author_name': args.user_name,
       'author_email': args.user_email,
-      'date': args.event_date,
+      'date': fix_date(args.event_date),
       'message': '',
       'files': '',
       'additions': '',

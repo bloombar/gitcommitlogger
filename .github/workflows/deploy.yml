@@ -20,6 +20,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install --user pipenv
           pipenv install pytest
+          pipenv install python-dateutil
           pipenv install build
           pipenv install
       - name: Build package
