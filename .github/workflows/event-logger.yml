@@ -4,7 +4,7 @@ on:
     branches: [main, master, test2]
   pull_request:
     types: [opened, closed]
-    branches: ["*"]
+    branches: [main, master]
 jobs:
   log:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       EVENT_TYPE: ${{ github.event_name }}
       EVENT_ACTION: ${{ github.event.action }}
       EVENT_USERNAME: ${{ github.actor }}
-      EVENT_EMAIL: ${{ github.event.pull_request.user.email }}
+      EVENT_EMAIL: "${{ github.event.pull_request.sender.email }}"
       PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
