@@ -14,11 +14,12 @@ jobs:
       REPOSITORY_URL: ${{ github.repositoryUrl }}
       EVENT_TYPE: ${{ github.event_name }}
       EVENT_ACTION: ${{ github.event.action }}
-      EVENT_USERNAME: ${{ github.event.actor }}
+      EVENT_USERNAME: ${{ github.actor }}
       EVENT_EMAIL: ${{ github.event.pull_request.user.email }}
       PR_MERGED: ${{ github.event.pull_request.merged }}
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
+      PR_MERGE_USER: ${{ github.event.pull_request.merged_by.login}}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -46,9 +47,12 @@ jobs:
           echo $REPOSITORY_URL
           echo $EVENT_TYPE
           echo $EVENT_ACTION
+          echo $EVENT_USERNAME
+          echo $EVENT_EMAIL
           echo $PR_MERGED
           echo $PR_CREATED_AT
           echo $PR_CLOSED_AT
+          echo $PR_MERGE_USER
           echo $COMMITS
           # git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S' # show latest commit log
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # a better way to show just the latest commits
@@ -61,7 +65,11 @@ jobs:
         run: |
           echo $COMMITS > commits.json
           cat commits.json # debugging
-          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -un $(echo $EVENT_USERNAME) -ue $(echo $EVENT_EMAIL) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_merged -d $(echo $PR_CLOSED_AT) -un $(echo $PR_MERGE_USER) -ue $(echo $EVENT_EMAIL) -i commits.json -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
+      - name: Log pull request closed without merge
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == false
+        run: |
+          pipenv run gitcommitlogger -r $(echo $REPOSITORY_URL) -t pull_request_closed -d $(echo $PR_CLOSED_AT) -un $(echo $EVENT_USERNAME) -ue $(echo $EVENT_EMAIL) -o commit_stats.csv -u $(echo $COMMIT_LOG_API) -v
       - name: Log push
         if: github.event_name == 'push'
         run: |
