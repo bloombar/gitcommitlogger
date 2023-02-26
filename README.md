@@ -1,6 +1,6 @@
 # gitcommitlogger
 
-A Python package that logs the details of a specific set of commits made to a GitHub repository. Logs are saved into a `CSV` file and can optionally be sent in a request to a web app, such as a Google Apps Script attached to a Google Sheet where the data can be stored.
+A Python package that logs the details of a specific set of events made to a GitHub repository. Logs are saved into a `CSV` file and can optionally be sent in a request to a web app, such as a Google Apps Script attached to a Google Sheet where the data can be stored.
 
 ## GitHub Actions integration
 
