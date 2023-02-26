@@ -188,6 +188,11 @@ def main():
       verboseprint(args.verbose, f'git output: {git_log_out}') # raw output
       verboseprint(args.verbose, f'git err: {git_log_err}') # any errors
 
+      # handle missing commit data... this seems to occur with merge commits
+      if git_log_out == '':
+        verboseprint(args.verbose, f'empty git output... skipping')
+        continue
+
       # parse git output
       commit_data = get_commit_data(git_log_out) 
       verboseprint(args.verbose, f'parsed git stats: {commit_data}')
