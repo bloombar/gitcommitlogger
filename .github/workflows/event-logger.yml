@@ -20,6 +20,7 @@ jobs:
       PR_CREATED_AT: ${{ github.event.pull_request.created_at}}
       PR_CLOSED_AT: ${{ github.event.pull_request.closed_at}}
       PR_MERGE_USER: ${{ github.event.pull_request.merged_by.login}}
+      EVERYTHING: ${{ toJSON(github) }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -54,6 +55,7 @@ jobs:
           echo $PR_CLOSED_AT
           echo $PR_MERGE_USER
           echo $COMMITS
+          echo EVERYTHING
           # git show --shortstat --date=format-local:'%m/%d/%Y %H:%M:%S' # show latest commit log
           git log --stat -n $(echo $COMMITS | jq '. | length' ) # a better way to show just the latest commits
       - name: Log pull request opened
