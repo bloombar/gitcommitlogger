@@ -57,8 +57,11 @@ def get_args():
   parser = argparse.ArgumentParser()
   parser.add_argument("-r", "--repository_url", help="URL of the github repository upon which this logger is being run", default='', required=False)
   parser.add_argument("-t", "--event_type", help="The type of event that is triggering this logger to be run, e.g. 'push' or 'pull_request', from github.event_type.", default='', required=False)
-  parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits)", default='', required=True)
-  parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit", default='', required=True)
+  parser.add_argument("-d", "--event_date", help="The date the event is being triggered.", default='', required=False)
+  parser.add_argument("-un", "--user_name", help="The name of the user performing the event.", default='', required=False)
+  parser.add_argument("-ue", "--user_email", help="The email of the user performing the event.", default='', required=False)
+  parser.add_argument("-i", "--inputfile", help="filename of JSON array of commits (typically saved from GitHub Action context variable, github.event.commits, during push events.)", default='', required=False)
+  parser.add_argument("-o", "--outputfile", help="filename where to store the CSV output with git stats for each commit.", default='', required=True)
   parser.add_argument("-u", "--url", help="The URL of the web app where the commit stats should be sent.", default='')
   parser.add_argument("-x", "--exclusions", help='A comma-separated string of files to exclude, e.g. --excusions "foo.zip, *.jpg, *.json" ', default=','.join(exclusions))
   parser.add_argument("-v", "--verbose", help="Whether to output debugging info", default=False, action="store_true")
@@ -139,8 +142,6 @@ def main():
   # set up logging
   logger = setup_logging(args.outputfile)
 
-  commit_ids = get_commit_ids(args.inputfile) # get the ids of all commits from the json file
-
   # set up exclusions
   exclusions = '-- . ' + ' '.join(["':(exclude,glob){}'".format(x) for x in args.exclusions]) # put the exclusions in the format git logs uses
   # print(f'exclusions: {exclusions}')
@@ -148,38 +149,66 @@ def main():
   # write the CSV heading line
   logger.info('repository_url,event_type,commit_id,commit_author_name,commit_author_email,commit_date,commit_message,commit_files,commit_additions,commit_deletions')
   
-  # iterate over commit ids and add each to a list
-  commits_list = [] # start it off blank
-  for commit_id in commit_ids:
-    
-    # get git stats for this commit
-    commit_data = get_commit_data(commit_id, exclusions) 
+  events_list = [] # start it off blank
 
-    # add repository url, if present
-    if args.repository_url:
-      verboseprint(args.verbose, f'repository_url: {args.repository_url}')
-      commit_data['repository_url'] = args.repository_url
+  # get pull request data, if any supplied
+  if args.event_type in ['pull_request_opened', 'pull_request_merged', 'pull_request_closed']:
+    # get pull request data
+    pull_request_data = {
+      'repository_url': args.repository_url,
+      'event_type': args.event_type,
+      'id': '',
+      'author_name': args.user_name,
+      'author_email': args.user_email,
+      'date': args.event_date,
+      'message': '',
+      'files': '',
+      'additions': '',
+      'deletions': ''
+    }
 
-    # add event type, if present
-    if args.event_type:
-      verboseprint(args.verbose, f'event_type: {args.event_type}')
-      commit_data['event_type'] = args.event_type
+    # add this pull request to the list
+    events_list.append(pull_request_data)
 
-    # add this commit to the list
-    commits_list.append(commit_data) 
-    
-    # log it to the csv data file
-    logger.info(f'{args.repository_url},{commit_data["event_type"]},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
+  # get push data, if any supplied
+  elif args.event_type in ['push']:
+
+    # get ids of each commit, if any supplied
+    commit_ids = []
+    if args.inputfile:
+      commit_ids = get_commit_ids(args.inputfile) # get the ids of all commits from the json file
+
+    # iterate over commit ids, if any, and add each to a list
+    for commit_id in commit_ids:
+
+      # get git stats for this commit
+      commit_data = get_commit_data(commit_id, exclusions) 
+
+      # add repository url, if present
+      if args.repository_url:
+        verboseprint(args.verbose, f'repository_url: {args.repository_url}')
+        commit_data['repository_url'] = args.repository_url
+
+      # add event type, if present
+      if args.event_type:
+        verboseprint(args.verbose, f'event_type: {args.event_type}')
+        commit_data['event_type'] = args.event_type
+
+      # add this commit to the list
+      events_list.append(commit_data) 
+      
+      # log it to the csv data file
+      logger.info(f'{args.repository_url},{commit_data["event_type"]},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
   # debugging print
-  verboseprint(args.verbose, f'commits_list: {commits_list}')
+  verboseprint(args.verbose, f'events list: {events_list}')
 
   # send the data to the web app URL, if any was supplied
   if args.url:
     # convert the list of commits to a JSON string
-    commits_json = json.dumps(commits_list)
+    commits_json = json.dumps(events_list)
     # send the data to the web app in a POST request
-    r = requests.post(args.url, json=commits_list)
+    r = requests.post(args.url, json=events_list)
     verboseprint(args.verbose, 'web app response: ', r.status_code, r.reason, r.content, r.text) # really the one
 
 if __name__ == "__main__":
