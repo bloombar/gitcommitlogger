@@ -1,7 +1,9 @@
-name: CI / CD
+name: deliver to PyPI
 on:
   push:
     branches: [main, master]
+name: deliver to PyPI
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
