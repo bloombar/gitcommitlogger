@@ -186,19 +186,19 @@ def main():
 
       # add repository url, if present
       if args.repository_url:
-        verboseprint(args.verbose, f'repository_url: {args.repository_url}')
+        # verboseprint(args.verbose, f'repository_url: {args.repository_url}')
         commit_data['repository_url'] = args.repository_url
 
       # add event type, if present
       if args.event_type:
-        verboseprint(args.verbose, f'event_type: {args.event_type}')
+        # verboseprint(args.verbose, f'event_type: {args.event_type}')
         commit_data['event_type'] = args.event_type
 
       # add this commit to the list
       events_list.append(commit_data) 
       
       # log it to the csv data file
-      logger.info(f'{args.repository_url},{commit_data["event_type"]},{commit_data["id"]},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
+      logger.info(f'{args.repository_url},{commit_data["event_type"]},{commit_id},{commit_data["author_name"]},{commit_data["author_email"]},{commit_data["date"]},"{commit_data["message"]}",{commit_data["files"]},{commit_data["additions"]},{commit_data["deletions"]}')
 
   # debugging print
   verboseprint(args.verbose, f'events list: {events_list}')
