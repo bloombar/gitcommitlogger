@@ -152,7 +152,7 @@ def main():
   events_list = [] # start it off blank
 
   # get pull request data, if any supplied
-  if args.event_type in ['pull_request_opened', 'pull_request_merged']:
+  if args.event_type in ['pull_request_opened', 'pull_request_merged', 'pull_request_closed']:
     # get pull request data
     pull_request_data = {
       'repository_url': args.repository_url,
