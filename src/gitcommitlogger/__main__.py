@@ -187,6 +187,7 @@ def main():
       git_log_out = get_git_output(commit_id, exclusions)
       verboseprint(args.verbose, f'git output: {git_log_out}')
       commit_data = get_commit_data(git_log_out) 
+      verboseprint(args.verbose, f'parsed git stats: {commit_data}')
 
       # add repository url, if present
       if args.repository_url:
