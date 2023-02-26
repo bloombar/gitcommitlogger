@@ -95,7 +95,7 @@ def get_git_output(commit_id, exclusions):
   git_log_out = git_log_out.decode('UTF-8') # convert bytes to string
   # print(f'git output: {git_log_out}')
   # print(f'git error: {git_log_err}')
-  return git_log_out
+  return git_log_out.strip(), git_log_err.strip()
 
 def get_commit_data(git_log_out):
   '''
@@ -183,9 +183,12 @@ def main():
     # iterate over commit ids, if any, and add each to a list
     for commit_id in commit_ids:
 
-      # get git stats for this commit
-      git_log_out = get_git_output(commit_id, exclusions)
-      verboseprint(args.verbose, f'git output: {git_log_out}')
+      # get git output for this commit
+      git_log_out, git_log_err = get_git_output(commit_id, exclusions)
+      verboseprint(args.verbose, f'git output: {git_log_out}') # raw output
+      verboseprint(args.verbose, f'git err: {git_log_err}') # any errors
+
+      # parse git output
       commit_data = get_commit_data(git_log_out) 
       verboseprint(args.verbose, f'parsed git stats: {commit_data}')
 
