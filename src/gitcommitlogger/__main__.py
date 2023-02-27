@@ -214,6 +214,9 @@ def main():
 
       # parse git output
       commit_data = get_commit_data(git_log_out) 
+      if not bool(commit_data):
+        verboseprint(args.verbose, f'empty parsed data... skipping')
+        continue
       verboseprint(args.verbose, f'parsed git stats: {commit_data}')
 
       # add repository url, if present
