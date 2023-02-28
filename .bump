@@ -1,0 +1,5 @@
+[bump]
+input = ./pyproject.toml
+minor = false
+patch = true
+reset = false
