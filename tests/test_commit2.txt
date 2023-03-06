@@ -1,0 +1,12 @@
+commit 42df000869022d1b784f04a9aa6cacf69a5093c8
+Merge: 9ff1590 e32032c
+Author: Yewon Song <98556497+sywu430@users.noreply.github.com>
+Date:   1677995709
+
+    Merge pull request #24 from agiledev-students-spring-2023/user-story/21/task/10/login-frontend
+
+    Added login screen, adjusted links for navbar
+
+    Foo bar baz
+
+ 2 files changed, 120 insertions(+), 22 deletions(-)
