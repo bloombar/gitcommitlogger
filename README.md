@@ -14,7 +14,7 @@ In order to save the logs into a Google Sheet, the following steps are required:
 
 - Create a Google Sheet.
 - Attach an Apps Script to the sheet by clicking the `Extensions`->`Apps Scripts` menu option in Google Sheets.
-- Copy/paste the example Apps Script in `apps-script-example`/[`code.js`]https://github.com/bloombar/gitcommitlogger/blob/main/apps-script-example/code.js) into the Apps Script editor and save. This sets up the script [as a web app](https://developers.google.com/apps-script/guides/web) so it can respond to `GET` or `POST` requests.
+- Copy/paste the example Apps Script in `apps-script-example`/[`code.js`](https://github.com/bloombar/gitcommitlogger/blob/main/apps-script-example/code.js) into the Apps Script editor and save. This sets up the script [as a web app](https://developers.google.com/apps-script/guides/web) so it can respond to `GET` or `POST` requests.
 - Click the buton to `Deploy`->`New Deployment` in the Apps Scripts editor. Note the web app URL that is generated once deployed.
 - Add the URL of the Apps Script web app to the GitHub repository [as a secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets) named `COMMIT_LOG_API`.
 - The `gitcommitlogger` command in the example GitHub Action will send a `POST` request to the Google Sheet web app whenever a push or pull request is made on the repository.
