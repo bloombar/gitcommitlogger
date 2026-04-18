@@ -178,10 +178,10 @@ def get_commit_data(git_log_out):
     # parse git commit log
     commit_data = {}  # start off blank
     git_log_out = re.sub(
-        "(\n {4}(.+)\n)+", r"\1", git_log_out
-    )  # remove multi-line commit messages
+        r"(\n    [^\n]+)\n+(?:    [^\n]*\n+)*", r"\1\n\n", git_log_out
+    )  # keep only first line of multi-line commit messages
     m = re.match(
-        r"commit ([a-zA-Z0-9]+).*\nAuthor:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?",
+        r"commit ([a-zA-Z0-9]+).*\n(?:Merge:\s.*\n)?Author:\s(.*)\s<((.*))>.*\nDate:\s(.*)\n\n(.*)\n\n(.*?(\d+) file[s]? changed)?(.*?(\d+) insertion[s]?)?(.*?(\d+) deletion[s]?)?",
         git_log_out,
     )
     if not m is None:
