@@ -224,7 +224,7 @@ def fix_date(bad_date):
         # date from github actions context is in ISO format
         iso_date = bad_date
         parsed_t = dp.parse(iso_date)
-        bad_date_int = int(parsed_t.strftime("%s"))
+        bad_date_int = int(parsed_t.timestamp())
 
     local_tz = pytz.timezone("America/New_York")
     utc_time = datetime.utcfromtimestamp(

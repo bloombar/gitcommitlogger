@@ -21,7 +21,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "pytest-cov", "coverage"]
 
 [project.urls]
 "Homepage" = "https://github.com/bloombar/gitcommitlogger"
@@ -30,3 +30,14 @@ dev = ["pytest"]
 
 [project.scripts]
 gitcommitlogger = "gitcommitlogger.__main__:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=gitcommitlogger --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["gitcommitlogger"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
